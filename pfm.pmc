@@ -1,0 +1,83 @@
+I4=0              ; Communications Integrity Mode
+I5=3              ; PLC Program Control
+I63=1 ; Needed for pmac epics driver
+
+
+;I19=6807        ; Clock source, MACRO IC 0
+I6800=I7000     ; Macro IC 0 MaxPhase/PWM Frequency Control
+I6801=I7001     ; Macro IC 0 Phase Clock Frequency Control
+I6802=I7002     ; Macro IC 0 Servo Clock Frequency Control
+
+
+I85=1           ; Station number #1 – User Input
+I6840=$4080     ; Macro IC0 Ring Configuration/Status, typical slave setting
+I6841=$0FF333   ; Macro IC0 Node Activate Ctrl (Servo nodes 0, 1, 4, 5, 8, 9, 12, 13) – User Input
+
+#define RingCheckPeriod 20    ; Suggested Ring Check Period [msec]
+#define FatalPackErr    15    ; Suggested Fatal Packet Error Percentage [%]
+I80=INT(RingCheckPeriod *8388608/I10/(I8+1)+1)    ; Macro Ring Check Period [Servo Cycles]
+I81=INT(I80* FatalPackErr /100+1)                 ; Macro Maximum Ring Error Count
+I82=I80-I81*4                                     ; Macro Minimum Sync Packet Count
+
+
+
+
+
+
+// Channels 5-8 PFM Clock Settings
+I7103=2258        ; Servo IC m Hardware Clock Control (2290 default)
+I7104=4           ; Servo IC m PWM Deadtime / PFM Pulse Width Control (13 default)
+I569,4,100=8191   ; Motor xx Output Command Limit (default clocks: 2427)
+
+I8004=$C78100     ; Entry 5 incremental encoder, no extension
+I8005=$C78108     ; Entry 6 incremental encoder, no extension
+I8006=$C78110     ; Entry 7 incremental encoder, no extension
+I8007=$C78118     ; Entry 8 incremental encoder, no extension
+
+// Channels 5-8 Output Mode Select, Encoder/Decode
+I7116,4,10=3      ; Servo IC m Channel n Output Mode Select
+I7110,4,10=8      ; Servo IC m Channel n Encoder/Timer Decode Control
+
+I502=$78104       ; Channel 5, PFM
+I602=$7810C       ; Channel 6, PFM
+I702=$78114       ; Channel 7, PFM
+I802=$7811C       ; Channel 8, PFM
+
+// Flags: Ignore limits
+I524,4,100=$120001    ;Motor xx Flag Mode Control
+
+
+I503=$3505 I504=$3505 ; Channel 5 position and velocity pointers
+I603=$3506 I604=$3506 ; Channel 6 position and velocity pointers
+I703=$3507 I704=$3507 ; Channel 7 position and velocity pointers
+I803=$3508 I804=$3508 ; Channel 8 position and velocity pointers
+
+
+I515,4,100=100        ; Motor xx Abort/Limit Deceleration Rate
+I516,4,100=10         ; Motor xx Maximum Program Velocity
+I517,4,100=10         ; Motor xx Maximum Program Acceleration
+I519,4,100=1          ; Motor xx Maximum Jog/Home Acceleration
+I522,4,100=1          ; Motor xx Jog Speed
+I523,4,100=1          ; Motor xx Home Speed and Direction
+I526,4,100=0          ; Motor xx Home Offset
+
+// Channels 5,8 PID Gains (with default clock settings):
+I530,4,100=11190      ; Motor xx PID Proportional Gain
+I531,4,100=0          ; Motor xx PID Derivative Gain
+I532,4,100=15038      ; Motor xx PID Velocity Feedforward Gain
+I533,4,100=0          ; Motor xx PID Integral Gain
+I534,4,100=0          ; Motor xx PID Integration Mode
+I535,4,100=0          ; Motor xx PID Acceleration Feedforward Gain
+
+
+;I144=$178423    ; Macro IC0 Node  0 Command Address. Torque Mode
+;I244=$178427    ; Macro IC0 Node  1 Command Address. Torque Mode
+;I344=$17842B    ; Macro IC0 Node  4 Command Address. Torque Mode
+;I444=$17842F    ; Macro IC0 Node  5 Command Address. Torque Mode
+;I544=$178433    ; Macro IC0 Node  8 Command Address. Torque Mode
+I644=$178437    ; Macro IC0 Node  9 Command Address. Torque Mode
+I744=$17843B    ; Macro IC0 Node 12 Command Address. Torque Mode
+I844=$17843F    ; Macro IC0 Node 13 Command Address. Torque Mode
+
+
+I500=1
